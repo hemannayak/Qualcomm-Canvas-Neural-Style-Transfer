@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Style Transfer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 900px;
+            margin-top: 50px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .form-select, .form-control {
+            border-radius: 8px;
+        }
+        .btn-primary {
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-weight: 600;
+        }
+        .image-preview {
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+            display: none;
+        }
+        .drop-zone {
+            border: 2px dashed #007bff;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            background-color: #f8f9fa;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .drop-zone:hover {
+            background-color: #e3f2fd;
+        }
+        .loading-spinner {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card p-4">
+                    <h1 class="text-center mb-4">Neural Style Transfer</h1>
+                    <p class="text-muted text-center">Upload an image and choose a style to apply artistic transformations.</p>
+                    
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class="alert alert-danger" role="alert">
+                                {{ messages[0] }}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <form id="uploadForm" method="POST" action="/upload" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="style" class="form-label">Select Style:</label>
+                            <select name="style" id="style" class="form-select" required>
+                                {% for style_key, style_name in styles.items() %}
+                                <option value="{{ style_key }}">{{ style_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Upload Image:</label>
+                            <div class="drop-zone" id="dropZone">
+                                <input type="file" id="file" name="file" accept="image/*" required style="display: none;">
+                                <p>Drag and drop an image here or click to browse</p>
+                                <small class="text-muted">Supported formats: PNG, JPG, JPEG</small>
+                            </div>
+                            <img id="imagePreview" class="image-preview mt-2" alt="Image Preview">
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                            <span class="spinner-border spinner-border-sm loading-spinner" role="status" aria-hidden="true"></span>
+                            Apply Style
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('file');
+        const imagePreview = document.getElementById('imagePreview');
+        const uploadForm = document.getElementById('uploadForm');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // Handle click to open file dialog
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        // Handle file selection
+        fileInput.addEventListener('change', (e) => {
+            handleFile(e.target.files[0]);
+        });
+        
+        // Handle drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('bg-light');
+        });
+        
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('bg-light');
+        });
+        
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('bg-light');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                handleFile(files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please select a valid image file.');
+            }
+        }
+        
+        // Show loading spinner on form submit
+        uploadForm.addEventListener('submit', () => {
+            submitBtn.disabled = true;
+            document.querySelector('.loading-spinner').style.display = 'inline-block';
+        });
+    </script>
+</body>
+</html>

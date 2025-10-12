@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style Transfer Result</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+            margin-top: 50px;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .image-container {
+            display: flex;
+            gap: 20px;
+        }
+        .image-box {
+            flex: 1;
+            text-align: center;
+        }
+        .image-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .image-box img:hover {
+            transform: scale(1.02);
+        }
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .modal-img {
+            max-width: 100%;
+            max-height: 80vh;
+        }
+        @media (max-width: 768px) {
+            .image-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card p-4">
+                    <h1 class="text-center mb-4">Style Transfer Result</h1>
+                    <h2 class="text-center text-primary mb-4">Style Applied: {{ style_name }}</h2>
+                    
+                    <div class="image-container">
+                        <div class="image-box">
+                            <h3>Original Image</h3>
+                            <img src="{{ url_for('uploaded_file', filename=input_image) }}" alt="Original Image" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="setModalImage(this.src, 'Original Image')">
+                        </div>
+                        <div class="image-box">
+                            <h3>Stylized Image</h3>
+                            <img src="{{ url_for('output_file', filename=output_image) }}" alt="Stylized Image" data-bs-toggle="modal" data-bs-target="#imageModal" onclick="setModalImage(this.src, 'Stylized Image')">
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-center gap-3 mt-4 flex-wrap">
+                        <a href="{{ url_for('output_file', filename=output_image) }}" download class="btn btn-success">Download Stylized Image</a>
+                        <a href="/" class="btn btn-primary">Try Another Image</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Image View</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" class="modal-img" alt="Modal Image">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function setModalImage(src, alt) {
+            document.getElementById('modalImage').src = src;
+            document.getElementById('modalImage').alt = alt;
+            document.getElementById('imageModalLabel').textContent = alt;
+        }
+    </script>
+</body>
+</html>
