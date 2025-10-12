@@ -477,7 +477,6 @@
 
         // Style Selection
         function selectStyle(styleKey) {
-            console.log('selectStyle called with:', styleKey);
             selectedStyle = styleKey;
 
             // Update UI
@@ -488,7 +487,6 @@
 
             // Enable process button if file is selected
             updateProcessButton();
-            console.log('selectedStyle set to:', selectedStyle);
         }
 
         // Drag and Drop Functionality
@@ -523,69 +521,42 @@
         });
 
         function handleFile(file) {
-            console.log('handleFile called with:', file.name, file.size, file.type);
             if (file && file.type.startsWith('image/')) {
                 selectedFile = file;
-                console.log('selectedFile set to:', selectedFile.name);
 
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     imagePreview.src = e.target.result;
                     imagePreview.style.display = 'block';
                     dropZone.style.display = 'none';
-                    console.log('Image preview set');
                 };
                 reader.readAsDataURL(file);
 
                 // Enable process button if style is selected
                 updateProcessButton();
-                console.log('updateProcessButton called');
             } else {
                 alert('Please select a valid image file.');
             }
         }
 
         function updateProcessButton() {
-            console.log('updateProcessButton called:', { selectedStyle, selectedFile: !!selectedFile });
             const processBtn = document.getElementById('processBtn');
             if (selectedStyle && selectedFile) {
                 processBtn.disabled = false;
-                console.log('Process button enabled');
             } else {
                 processBtn.disabled = true;
-                console.log('Process button disabled');
             }
         }
 
         // Process Image
         async function processImage() {
-            console.log('processImage called');
-            alert('processImage started'); // Temporary debug alert
-
             if (!selectedStyle || !selectedFile) {
                 console.log('Missing requirements:', { selectedStyle, selectedFile: !!selectedFile });
-                alert('Please select a style and upload an image.');
                 return;
             }
 
             console.log('Processing image with style:', selectedStyle);
             console.log('Selected file:', selectedFile.name, selectedFile.size, selectedFile.type);
-
-            // Get DOM elements with checks
-            const processBtn = document.getElementById('processBtn');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-
-            if (!processBtn) {
-                console.error('processBtn element not found');
-                alert('Error: Process button not found. Please refresh the page.');
-                return;
-            }
-
-            if (!loadingSpinner) {
-                console.error('loadingSpinner element not found');
-                alert('Error: Loading spinner not found. Please refresh the page.');
-                return;
-            }
 
             const formData = new FormData();
             formData.append('file', selectedFile);
@@ -594,6 +565,9 @@
             console.log('FormData created with style:', selectedStyle);
 
             // Show loading state
+            const processBtn = document.getElementById('processBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
             processBtn.disabled = true;
             loadingSpinner.style.display = 'inline-block';
             processBtn.innerHTML = '<span class="loading-spinner" id="loadingSpinner"></span><i class="fas fa-cog fa-spin me-2"></i>Creating Artwork...';
@@ -604,11 +578,8 @@
                     body: formData
                 });
 
-                console.log('Response status:', response.status);
-
                 if (response.ok) {
                     const data = await response.json();
-                    console.log('Response data:', data);
 
                     if (data.success) {
                         // Show result with data from JSON response
@@ -617,12 +588,9 @@
                         throw new Error(data.error || 'Upload failed');
                     }
                 } else {
-                    const errorText = await response.text();
-                    console.error('Response error:', errorText);
-                    throw new Error(`Upload failed with status ${response.status}: ${errorText}`);
+                    throw new Error('Upload failed');
                 }
             } catch (error) {
-                console.error('Error processing image:', error);
                 alert('Error processing image: ' + error.message);
                 resetProcessButton();
             }
@@ -632,14 +600,9 @@
             const processBtn = document.getElementById('processBtn');
             const loadingSpinner = document.getElementById('loadingSpinner');
 
-            if (processBtn) {
-                processBtn.disabled = false;
-                processBtn.innerHTML = '<span class="loading-spinner" id="loadingSpinner"></span><i class="fas fa-magic me-2"></i>Apply Artistic Style';
-            }
-
-            if (loadingSpinner) {
-                loadingSpinner.style.display = 'none';
-            }
+            processBtn.disabled = false;
+            loadingSpinner.style.display = 'none';
+            processBtn.innerHTML = '<i class="fas fa-magic me-2"></i>Apply Artistic Style';
         }
 
         function showResultFromData(data) {
@@ -811,40 +774,77 @@
                 const file = new File([blob], `camera-${selectedStyle}-${Date.now()}.jpg`, { type: 'image/jpeg' });
                 console.log('File created:', file.name, file.size, file.type);
 
-                // Set the captured image as preview, similar to file upload
-                selectedFile = file;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block';
-                    dropZone.style.display = 'none';
-                };
-                reader.readAsDataURL(file);
+                try {
+                    // Show processing message
+                    showProcessingStatus('Processing your photo with ' + getStyleName(selectedStyle) + ' style...');
 
-                // Update process button
-                updateProcessButton();
+                    // Process the captured image but show result instead of auto-downloading
+                    await processCapturedImageForDisplay(file);
 
-                // Close camera after capturing
-                closeCamera();
-
-                // Show a message that the image is ready for processing
-                showProcessingStatus('Image captured! Click "Apply Artistic Style" to process.');
-
-                setTimeout(() => {
+                } catch (error) {
+                    console.error('Error processing captured image:', error);
+                    alert('Error processing captured image: ' + error.message);
                     hideProcessingStatus();
-                }, 2000);
+                }
 
+                // Close camera after processing
+                closeCamera();
             }, 'image/jpeg', 0.9);
         }
 
         async function processCapturedImageForDisplay(file) {
-            // This function is no longer used since we now use the standard processImage flow
-            // Keeping for potential future use or reference
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('style', selectedStyle);
+
+            console.log('Processing captured image with style:', selectedStyle);
+
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log('✅ Image processed successfully');
+
+                    // Show success message
+                    showProcessingStatus(`✅ Your ${data.style_name} artwork is ready!`);
+
+                    // Show the result instead of auto-downloading
+                    setTimeout(() => {
+                        showCameraResult(data);
+                    }, 1000);
+
+                } else {
+                    throw new Error(data.error || 'Processing failed');
+                }
+            } else {
+                throw new Error('Upload failed');
+            }
         }
 
         function showCameraResult(data) {
-            // This function is no longer used since we now use the standard showResultFromData flow
-            // Keeping for potential future use or reference
+            // Update images using the paths from JSON response
+            document.getElementById('originalImage').src = '/uploads/' + data.input_image;
+            document.getElementById('stylizedImage').src = '/outputs/' + data.output_jpg;
+
+            // Update result section title
+            document.querySelector('.result-title').innerHTML = `<i class="fas fa-star me-2"></i>Your ${data.style_name} Camera Artwork`;
+
+            // Show result section with download options
+            document.getElementById('uploadSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'block';
+
+            // Update download buttons to include camera-specific naming and format options
+            updateDownloadButtons(data.output_jpg, data.output_png, data.style_name);
+
+            // Scroll to result
+            document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+
+            hideProcessingStatus();
         }
 
         function updateDownloadButtons(jpgFilename, pngFilename, styleName) {
