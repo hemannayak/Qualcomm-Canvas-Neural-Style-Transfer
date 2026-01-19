@@ -111,25 +111,25 @@ Qualcomm-Canvas-Neural-Style-Transfer/
    ```bash
    python -m venv venv
    source venv/bin/activate        # Windows: venv\Scripts\activate
-   ```
+````
 
 3. **Install dependencies**
 
    ```bash
    pip install -r requirements.txt
-   ```
+````
 
 4. **Run the application**
 
    ```bash
    python web_interface.py
-   ```
+````
 
 5. **Open in browser**
 
    ```
    http://localhost:5001
-   ```
+````
 
 ---
 
