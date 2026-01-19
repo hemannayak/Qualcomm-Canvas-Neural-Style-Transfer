@@ -1,4 +1,4 @@
-```markdown
+
 # Qualcomm Canvas – Neural Style Transfer Web Application 🎨🧠
 
 ## Overview
@@ -187,10 +187,8 @@ You are free to use, modify, and distribute this project with proper attribution
 
 **Hemanth Nayak**
 GitHub: [https://github.com/hemannayak](https://github.com/hemannayak)
-
 ---
 
 ⭐ If you find this project useful, consider starring the repository!
 
-```
 ```
