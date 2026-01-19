@@ -1,72 +1,57 @@
-
 # Qualcomm Canvas – Neural Style Transfer Web Application 🎨🧠
 
 ## Overview
 
-**Qualcomm Canvas** is an AI-powered **Neural Style Transfer** web application developed as part of an academic–industry exposure initiative associated with **IIIT Hyderabad (IIITH)** and **Qualcomm**.  
-The project demonstrates how deep learning models can be deployed in a web environment to apply artistic styles to images in real time.
+> **Qualcomm Canvas** is an AI-powered **Neural Style Transfer** web application developed as part of an academic–industry exposure initiative associated with **IIIT Hyderabad (IIITH)** and **Qualcomm**.
 
-Users can upload images or capture photos using a camera and transform them into artistic paintings using pre-trained neural networks.
+The project demonstrates how deep learning models can be deployed in a web environment to apply artistic styles to images in real time. Users can upload images or capture photos using a camera and transform them into artistic paintings using pre-trained neural networks.
 
 ---
 
 ## Project Objectives 🎯
 
-- Implement Neural Style Transfer using deep learning  
-- Integrate machine learning models with a Flask web application  
-- Enable real-time image stylization  
-- Build a responsive and user-friendly web interface  
-- Demonstrate practical deployment of AI models  
-
----
-
-## Features ✨
-
-- Apply multiple artistic styles to images  
-- Upload images from local storage  
-- Capture images using device camera  
-- Fast inference using ONNX Runtime  
-- Download high-quality stylized images  
-- Web-based interface accessible via browser  
+* **Deep Learning Implementation:** Practical application of Neural Style Transfer.
+* **Web Integration:** Connecting machine learning models with a Flask-based backend.
+* **Efficiency:** Enabling real-time image stylization.
+* **User Experience:** Building a responsive and intuitive web interface.
+* **Deployment:** Demonstrating how AI models move from development to production.
 
 ---
 
 ## Neural Style Transfer 🖌️
 
-Neural Style Transfer is a deep learning technique that combines:
-- **Content** of one image  
-- **Style** of another image  
+Neural Style Transfer (NST) is a technique that blends two images: a **Content** image and a **Style** image (like a famous painting).
 
-This project uses pre-trained feed-forward neural networks, enabling fast style application without iterative optimization during runtime.
+This project utilizes pre-trained **feed-forward neural networks**. Unlike the original optimization-based NST, this method allows for fast style application without needing iterative updates during runtime. The core objective is to minimize a loss function defined as:
+
+Where  and  are weights representing the emphasis on content and style, respectively.
+
+---
+
+## Features ✨
+
+* **Multiple Styles:** Choose from various artistic filters.
+* **Flexible Input:** Upload from local storage or use a live **device camera**.
+* **High Performance:** Fast inference powered by **ONNX Runtime**.
+* **Easy Export:** Download stylized images instantly.
+* **Web-First:** Fully accessible via any modern browser.
 
 ---
 
 ## Tech Stack 🧩
 
-### Programming & Frameworks
-- Python 3  
-- Flask  
-
-### Machine Learning & AI
-- PyTorch  
-- ONNX Runtime  
-- Pre-trained Neural Style Transfer models  
-
-### Frontend
-- HTML5  
-- CSS3  
-- JavaScript  
-- Bootstrap  
-
-### Image Processing
-- Pillow (PIL)  
+| Category | Tools |
+| --- | --- |
+| **Backend** | Python 3, Flask |
+| **AI/ML** | PyTorch, ONNX Runtime |
+| **Frontend** | HTML5, CSS3, JavaScript, Bootstrap |
+| **Image Processing** | Pillow (PIL) |
 
 ---
 
 ## Project Structure 📁
 
-```
-
+```bash
 Qualcomm-Canvas-Neural-Style-Transfer/
 │
 ├── neural_style/
@@ -77,118 +62,111 @@ Qualcomm-Canvas-Neural-Style-Transfer/
 ├── templates/
 │   └── desx.html                 # Frontend UI template
 │
-├── uploads/                      # Uploaded images
-├── outputs/                      # Stylized output images
+├── uploads/                      # Temporary storage for uploads
+├── outputs/                      # Storage for processed images
 │
-├── *.onnx                        # ONNX style models
+├── *.onnx                        # Optimized ONNX style models
 ├── *.pth                         # PyTorch model weights
 │
 ├── web_interface.py              # Flask application entry point
-├── requirements.txt              # Python dependencies
-└── README.md
+├── requirements.txt              # Dependency list
+└── README.md                     # Documentation
 
-````
+```
 
 ---
 
 ## Installation and Setup ⚙️
 
 ### Prerequisites
-- Python 3.9 or above  
-- Git  
-- Webcam (optional, for camera mode)  
+
+* Python 3.9+
+* Git
+* Webcam (optional)
 
 ### Steps
 
 1. **Clone the repository**
-   ```bash
-   git clone https://github.com/hemannayak/Qualcomm-Canvas-Neural-Style-Transfer.git
-   cd Qualcomm-Canvas-Neural-Style-Transfer
-````
+```bash
+git clone https://github.com/hemannayak/Qualcomm-Canvas-Neural-Style-Transfer.git
+cd Qualcomm-Canvas-Neural-Style-Transfer
+
+```
+
 
 2. **Create a virtual environment**
+```bash
+python -m venv venv
+# For Windows:
+venv\Scripts\activate
+# For Mac/Linux:
+source venv/bin/activate
 
-   ```bash
-   python -m venv venv
-   source venv/bin/activate        # Windows: venv\Scripts\activate
-````
+```
+
 
 3. **Install dependencies**
+```bash
+pip install -r requirements.txt
 
-   ```bash
-   pip install -r requirements.txt
-````
+```
+
 
 4. **Run the application**
+```bash
+python web_interface.py
 
-   ```bash
-   python web_interface.py
-````
+```
+
 
 5. **Open in browser**
-
-   ```
-   http://localhost:5001
-````
+Navigate to: `http://localhost:5001`
 
 ---
 
 ## Usage Instructions 🚀
 
-### Image Upload Mode
+### Option A: Image Upload
 
-1. Select an artistic style
-2. Upload an image
-3. Click **Apply Style**
-4. Download the stylized output
+1. Select an artistic style from the sidebar/menu.
+2. Upload a photo from your computer.
+3. Click **Apply Style**.
+4. View and download your stylized artwork.
 
-### Camera Mode
+### Option B: Camera Mode
 
-1. Select a style
-2. Enable camera
-3. Capture image
-4. Apply style and download result
-
----
-
-## Model Details 🧠
-
-* Uses pre-trained feed-forward neural style transfer networks
-* Models converted to ONNX format for faster inference
-* No training required during runtime
+1. Select your preferred style.
+2. Grant camera permissions and capture a photo.
+3. Click **Apply Style** to process the capture.
 
 ---
 
 ## Learning Outcomes 📚
 
-* Practical understanding of Neural Style Transfer
-* Experience deploying ML models using Flask
-* Hands-on exposure to real-time AI inference
-* Integration of frontend and backend for ML applications
+* Practical understanding of **Computer Vision** and NST.
+* Experience in **Model Quantization** and conversion to ONNX format.
+* Hands-on experience with **Full-stack AI deployment**.
 
 ---
 
 ## License 📄
 
-This project is licensed under the **MIT License**.
-You are free to use, modify, and distribute this project with proper attribution.
-
----
+This project is licensed under the **MIT License**. You are free to use, modify, and distribute this project with proper attribution.
 
 ## Acknowledgements 🙏
 
-* IIIT Hyderabad (IIITH)
-* Qualcomm Technologies
-* Neural Style Transfer research community
+* **IIIT Hyderabad (IIITH)** for project guidance.
+* **Qualcomm Technologies** for industry exposure.
+* The open-source **Neural Style Transfer** research community.
 
 ---
 
 ## Author 👨‍💻
 
 **Hemanth Nayak**
-GitHub: [https://github.com/hemannayak](https://github.com/hemannayak)
+
+* GitHub: [@hemannayak](https://github.com/hemannayak)
+
+> ⭐ If you find this project useful, consider starring the repository!
+
 ---
-
-⭐ If you find this project useful, consider starring the repository!
-
-```
